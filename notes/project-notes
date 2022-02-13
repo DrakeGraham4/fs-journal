@@ -1,0 +1,113 @@
+
+// Function definition / declaration
+function cowSays(){
+    //console.log('moo') or 
+    //alert('moo')
+    let animalElm = document.getElementById('animal')
+    //console.log('animal elm', animalElm)
+    let saysElm = document.getElementById('says')
+    //to make it work
+    animalElm.innertext = 'Cow'
+    saysElm.innerText = 'Moo'
+}
+
+// Function invocation / go / do the thing 
+cowSays()
+
+go to btn in html, add onclick = "cowSays()"
+
+use getElementbyId to grab info from DOM 
+THE <span id="animal">________ </span> SAYS <span id="says">_________</span>! 
+
+innerText grabs the 'text'
+innerHTML lets your code know to display as HTML 
+
+// Dictionary
+
+let dictionary = {
+    key: 'value',
+    duck: 'img'
+
+}
+
+------------- SECTION -----------
+Guess Who? 2/8/2022
+
+draw function is something that updates the page 
+
+padding or margin top of bottom is okay on columns but never margin on x and y or else it will change the width of the columns
+
+dont use padding start ot end on a row either
+
+add class img-fluid on img src so the image doesnt blow out of the columns
+
+make array of objects ex let cats= ['mittens', 'snowball' 'mr. snibbley']
+let template = " "
+
+make for loop ex. for(let i = 0; i < cats.length; i++) {
+    const cat = cats[i]
+    template += `*inject template here* from HTML`
+}
+
+document.getElementById('cards').innterHTML.template
+
+---------SECTION Zoo Keeper 2/10/2022--------
+div id = "pens" class = "row"
+start template under the first row that has id and class
+
+outline does not take up space, border will push thimgs around
+
+marquee tag 
+
+Step 1. Write the html for one object to be drawn to the page
+
+let animals = {
+    koko: {
+        hunger: 100,
+        emoji: '🦍'
+    },
+    khan: {
+        hunger: 100,
+        emoji: '🐅'
+    }
+
+}
+
+ 1. function drawAnimals(){
+    let template = ''
+    for(let key in animals){
+        console.log(key);
+      let animal = animals[key]
+      template += `inject html`
+    }
+    document.getElementById('pens').innerHTML = template
+}
+
+3. function updateAnimal(name){
+    let animalElm = document.getElementById(name)
+    console.log(animalElm)
+    let bar = animalElm.querySelector('.progress')
+}
+
+2. function hunger(){
+    for(let key in animals){
+        let animals = animals[key]
+        animals.hunger -= 5
+        if(animal.hunger <= 0){
+            alert(key+ ' has perished')
+        }
+
+    }
+}
+
+key is like i in a forloop
+
+use key to access the object, like koko, to access attributes in key use animal.hunger or animal.emoji
+
+get getElementById gets an element by its id
+
+querySelector grabs an elemant from HTML but by anything else but id i.e. .progress-bar
+
+key is first selector that we go into i.e. koko, khan
+
+classList.add is just adding a class to the lisy of classes i.e. text-center, p-5 in the html
