@@ -110,4 +110,10 @@ querySelector grabs an elemant from HTML but by anything else but id i.e. .progr
 
 key is first selector that we go into i.e. koko, khan
 
-classList.add is just adding a class to the lisy of classes i.e. text-center, p-5 in the html
+classList.add is just adding a class to the list of classes i.e.text - center, p - 5 in the html
+
+------------2 / 14 / 2022 Zoo Keeper-------------
+
+    Class is a blueprint of an Object
+
+    Method is a functon that exists on a class, 
