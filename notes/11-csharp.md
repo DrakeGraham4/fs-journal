@@ -148,3 +148,279 @@ Any time there is a promise/async on methods you must use Task<ActionResult<Game
 
 3. To get my games/favorites, you must go through accounts controller and make get request. must add private readonly for GamesService to be able to call it in accounts controller.
 4. Set up method in GamesRepository. Also must at score and GamePlayerId to Game model if wanting to send score back to client.
+
+-------SECTION Monday Icats Interfaces and Inheritance-----
+
+1. Make a folder called interfaces. interfaces are a way to add structure and scaffolding to your project before you start building your app. A way to create standards for your application.
+
+namespace ?.Models
+{
+
+When people interact with each other they will be seeing profiles not account but if you are the account owner, when you request account info it will show Profile and account info
+
+public class Profile{
+
+public string Id {get; set;}
+public string Name {get; set;}
+public string Picture {get; set;}
+
+}
+The account inherits from profile
+inherits, pulling info from accounts model but only send back the profile info when a different user is accessing
+public class Account : Profile
+{
+public string Id {get; set;}
+
+// Sensitive Information on account that you don't want to get back
+public string StreetAddress {get; set;}
+public int CreditCardNumber {get; set;}
+
+}
+
+}
+
+1. Make interface folder, Add interface file IRepoItem.cs
+
+namespace Icats.Interfaces
+{
+public interface IRepoItem<T>
+{
+public int Id {get; set;}
+public DateTime CreatedAt {get; set;}
+public DateTime UpdatedAt {get; set;}
+}
+}
+
+2. Go back to account.cs and make Profile : (inherit) IRepoItem.
+   Add Id, createdAt and UpdatedAt on to the profile model
+   Profile can now be a repo item because it now has those props from IRepoItem
+
+3. Add new interface file IRepository.cs
+
+namespace Icats.Interface
+{
+public interface IRepository // this is what makes up repository layer/ shows that this is what makes up a repository
+{
+List<Profile> GetAll()
+Profile GetById( string id);
+Profile Create(Profile data);
+Profile Edit(Profile data);
+string Delete(string id);
+}
+}
+
+4. Make profiles repository and have it : (inherit) the IRepository
+
+namespace Icats.Repository
+
+How to make interface not care about the Id datatype, whether its a string or an int
+
+Use T in front of all propes and add <T> to the interface and then throughout the models specify in inhertance <> what the id will be
+Example public class Cat : IRepoItem<int>
+{
+public int Id {get; set;}
+}
+
+------ 4/12/2022 Many to Many Front end-----
+
+1.  <!-- Many to many table -->
+
+        warehouseProducts(
+
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    warehouseId INT NOT NULL,
+    productId INT NOT NULL,
+    FOREIGN KEY (warehouseId) REFERENCES warehouses(id),
+    FOREIGN KEY (productId) REFERENCES products(id)
+    ) default charset utf8 COMMENT '';
+
+2.  Delete with foreign key constraint. Add ON DELETE CASCADE to the warehouseId and productId in the many to many table. If not written before creating table, must drop table first.
+
+3.  Add public class ProductViewModel : Product in product model. ViewModel means what the front end will view, how do you want to view this data in the front end?
+    {
+    public int WarehouseProductId {get; set;}
+    public string Location {get; set;}
+
+}
+
+3. WareHouseProductController
+   Build the create method
+   Add [HttpPost]
+   public ActionResult<ProductViewModel> Create([FromBody] WarehouseProduct warehouseProductData)
+   {
+
+}
+
+4. Make Create in service pointing to repo
+   <!-- Making the switch of data types in service -->
+
+   {
+   WarehouseProduct warehouseProduct = \_repo.Create(warehouseProductData);
+   <!-- Making the switch -->
+
+   ProductViewModel product = (ProducViewModel)\_pService.GetById(warehouseProduct.ProductId)
+   Warehouse warehouse = \_wService.GetById(warehouseProduct.WarehouseId)
+   <!-- Adding view model properties/ location and warehouseProductId -->
+
+   product.WarehouseProductId = warehouseProduct.Id;
+   product.location = warehouse.Location;
+   return product;
+
+   }
+
+5. Make Create in repo
+
+internal WarehouseProduct Create(WarehouseProduc warehouseProductData)
+{
+string sql =@"
+INSERT INTO;
+
+     int id = _db.ExecuteScalar<int>(sql, warehouseProductData);
+     warehouseProductData.Id = id;
+     return warehouseProductData;
+
+}
+
+Object reference not set to an instance of an object postman error
+You're referencing something that has not yet been created
+
+1.  computed to get warehouses on to homepage
+
+2.  make new component warehouse.vue
+
+3.  bring in warehouse component to homepage, make v-for on col above <Warehouse /> for tiling
+
+4.  Add props onto warehouse component
+
+5.  where to put modal when wanting to click on warehouse and open showing packages within the warehouse
+
+6.  Put it at the bottom of template on homepage
+
+7.  <Modal id="warehouse-modal">
+       <template #modal-header>{{activeWarehouse}}
+       </template>
+       <template #modal-body>
+       <WarehouseDetails />
+       </template>
+    </Modal>
+
+    add data-bs-target and toggle to selectable add setActive()
+    in script in return make a method for set active
+
+    Add computed for activeWarehouse
+
+    make getAll in warehouses service
+
+    make getproducts in warehouseService
+
+    make a computed in warehouseDetails for products to be able to access them in template
+
+    make another component product.vue
+
+    make v-for for Product component in warehouse details
+
+    in product.vue add props for product
+
+    <Product> is the child of warehouseDetails so the props go in to the Product Component and the computed goes in to WarehousesDetails component
+
+    Add computed to home page for products after bringing in <Product> props still only on Product.vue
+
+    8.  Now showing a seperate modal for each product
+        Add modal to product.vue with product.name and product.description and product.sku
+
+    9.  To take product and put into warehouse
+        On Product.Vue make a drop down <select name = "" id="">
+        <option value = ""> option 1</option>
+                           button with @click addToWarehouse()
+
+8.  Add computed for warehouses on Product.vue to be able to access them. Add v-for on option for your warehouses
+9.  when accessing ref in script you must use value
+
+---- Many to many groups----
+
+1. You can set up a private method in membership service for get(id)
+
+2. To be able to get to your groups from any page
+   Go to authservice, groupsService.GetMyGroups
+   make that method in groupsService
+   make myGroups in appstate as to not reuse groups
+   Dump my groups into homepage
+
+----All day code---
+
+1. Add uniqueness to all of your exceptions
+2. FirstOrDefault for one, ToList for more than one in repo
+3. Use just GetById in your update and delete in service because your GetById in service has a check on it
+4. 405 in postman means the route exists but the method does not exist on that route
+5. Makes profile controller to get the reviews that profile has made
+6. If sending a method to a service of a different type (sending from profile controller to review service), specify the id as profile id in review service
+7. If creatorId is ambiguous you must check to see if both tables have the same column, must specify which
+8. If grabbing full info from both or more tables when joining, you must map.
+
+-----Client-----
+
+1. Get rid of all prebuilt stuff
+2. Add setup to homepage, make your onMounted in that set up, put in your try catch, make your service, back to homepage, make your getall calling to service. back to service, make your get all in service. put whatever youre calling into appstate, make your return and add computed for what you were getting.
+
+3. Add container to div class to template on homepage, make a row, make a col, add v-for to that col, test with data dumps of name. Add styling. Make card. <img class="img-fluid" :src="?.picture"/>
+
+4. Object-fit-cover in css to make the picture fit and cover
+
+5. Use span tags to keep things together when styling but want to push something else to the end
+
+6. Clean up all styling and data from home and make a new component, add props to that component that you made to be able to inject to another page.
+   Inject <Restaurant /> into Home
+
+7. Make @click in component. Add setup and return to script. make setactive in return, add active to appstate. pass props through setup.
+
+8. Make Modal component. bs5-modal-default. make slots with name for title and body. modal-xl, to vertically center modal on page add modal-dialog-center in dialog div
+
+9. Add data-bs-target=#id, data-bs-toggle="modal" to component where the setactive is
+
+10. Make details component. Put Modal into this component dump data, throw computed for active? in return
+
+11. Put <Details> in App.vue in routerview tag
+
+12. Style details component where modal content lives, add all details {{}}
+
+13. Make get method and point to service for details in the page holding setactive @click. Add close modal as well.
+    make method in service to get what you are looking for. Add computed in page with setactive, dump data
+
+14. Add ? mark after anywhere you are drilling more than twice when calling to data in case its calling for something that isnt there yet.
+
+15. Clean it up
+
+16. Make Profile Page.
+
+17. Use router link for icon use go to on modal so that it closes it at the same time
+
+18. In details component, add gotoprofile and add in the Modal close and router push. In setup add const router.
+
+19. On profile page add all infor needed, add onmounted, write new service for profiles, back to profilepage, point to service wiith addprofile and addreviews add in route.params.id to get id, add use route in set up to get route. Make methods in service.
+
+20. Add data to template in profile, add computed
+
+21. review count on profile page {{reviews.length}}
+
+22. average for reviews add method into return averagereviews:computed(()=> {
+    let total = 0
+    reviews.foreach(r=> total += r.rating)
+    return (total / reviews.length).toFixed(1)
+    })
+23. {{averageRating}}
+
+24. NO D-FLEX ON MASONRY INCLUDING ROWS. ROW HAS D-FLEX.
+
+25. How masonry works:
+    in script on profile page
+    Add class on parent div.
+    add css class masonry-with-columns {
+    columns: 6 200px;
+    column-gap: 1rem;
+    div{
+    display: inline-block;
+    width: 100%
+    }
+    }
+
+v-model goes goes on input for form. Add ref in same page under set up where v-model is located. use .value with ref
